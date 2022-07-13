@@ -29,13 +29,20 @@ jobs:
         uses: actions/setup-go@v3
         with:
           go-version: 1.17
-      -
-        name: Import GPG key
-        id: import_gpg
-        uses: hashicorp/ghaction-import-gpg@v2.1.0
-        env:
-          # These secrets will need to be configured for the repository:
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+      - run: |
+          #
+          echo -e "${{ env.GPG_PRIVATE_KEY }}" | gpg --import --batch --no-tty
+          echo "hello world" > temp.txt
+          gpg --detach-sig --yes -v --output=/dev/null --pinentry-mode loopback --passphrase "${{ env.PASSPHRASE }}" temp.txt
+          rm temp.txt
+        shell: bash
+        name: import GPG key and prime passphrase
+      - id: gpg-fingerprint
+        run: |
+          fingerprint=$(gpg --with-colons --list-keys | awk -F: '/^pub/ { print $5 }')
+          echo "::set-output name=fingerprint::$fingerprint"
+        shell: bash
+        name: set gpg fingerprint output
       -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v3.0.0
