@@ -37,6 +37,9 @@ jobs:
           rm temp.txt
         shell: bash
         name: import GPG key and prime passphrase
+        env:
+          # These secrets will need to be configured for the repository:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
       - id: gpg-fingerprint
         run: |
           fingerprint=$(gpg --with-colons --list-keys | awk -F: '/^pub/ { print $5 }')
