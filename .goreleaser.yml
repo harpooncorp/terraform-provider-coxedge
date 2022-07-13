@@ -52,7 +52,7 @@ signs:
       - "${artifact}"
 release:
   github:
-    owner: coxedge
+    owner: harpooncorp
     name: terraform-provider-coxedge
   extra_files:
     - glob: 'terraform-registry-manifest.json'
